@@ -10,6 +10,8 @@ const PORT = process.env.PORT || 3000;
 
 const postsRoutes = require('./routes/routes');
 
+app.use(express.json());
+
 // Send a response on GET requests on /
 app.get('/', (req, res) => {
   res.send('Node API is running!');

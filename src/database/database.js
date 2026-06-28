@@ -47,7 +47,7 @@ function get(sql, params = []) {
       if (err) {
         return reject(err);
       }
-
+      console.log(resolve(row));
       resolve(row);
     });
   });

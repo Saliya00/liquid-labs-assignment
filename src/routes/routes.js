@@ -8,4 +8,7 @@ router.get('/all', postsController.getAllPosts);
 // Get a single post by post ID
 router.get('/:id', postsController.getPostById);
 
+// Create a new post
+router.post('/create', postsController.createPost);
+
 module.exports = router;

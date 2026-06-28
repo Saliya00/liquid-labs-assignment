@@ -3,7 +3,6 @@ const db = require('../database/database');
 const BASE_URL = process.env.BASE_URL;
 
 // Fetch all posts while considering the caching logic
-
 exports.getAllPosts = async () => {
   const posts = await db.all('SELECT * FROM posts');
 
@@ -12,6 +11,7 @@ exports.getAllPosts = async () => {
   }
 
   const response = await axios.get(BASE_URL);
+  console.log(response);
   const apiPosts = response.data;
 
   for (const post of apiPosts) {
@@ -31,6 +31,7 @@ exports.getPostById = async (id) => {
   const post = await db.get('SELECT * FROM posts WHERE id = ?', [id]);
 
   if (post) {
+    console.log(post);
     return post;
   }
   console.log(post);
@@ -40,7 +41,7 @@ exports.getPostById = async (id) => {
     console.log('next step');
     const apiPost = response.data;
     console.log(apiPost);
-    if (!apiPost || !apiPost.id) {
+    if (!apiPost.id) {
       return null;
     }
     console.log('before db.run to update missing');
@@ -58,4 +59,19 @@ exports.getPostById = async (id) => {
 
     throw error;
   }
+};
+
+// Create a new post
+exports.createPost = async (post) => {
+  console.log(post.userId, post.title, post.body);
+  const result = await db.run(
+    `INSERT INTO posts (userId, title, body)
+     VALUES (?, ?, ?)`,
+    [post.userId, post.title, post.body],
+  );
+
+  return {
+    id: result.lastID,
+    ...post,
+  };
 };

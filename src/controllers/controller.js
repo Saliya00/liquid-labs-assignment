@@ -40,3 +40,23 @@ exports.getPostById = async (req, res) => {
     });
   }
 };
+
+/**
+ * POST /posts/create
+ * Create a new post
+ */
+exports.createPost = async (req, res) => {
+  try {
+    console.log('inside createPost controller');
+    console.log(req.body);
+    const newPost = await service.createPost(req.body);
+
+    return res.status(201).json(newPost);
+  } catch (error) {
+    console.error('Error creating post:', error.message);
+
+    return res.status(500).json({
+      error: 'Internal server error',
+    });
+  }
+};
