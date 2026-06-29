@@ -9,6 +9,9 @@ router.get('/all', postsController.getAllPosts);
 router.get('/:id', postsController.getPostById);
 
 // Create a new post
-router.post('/create', postsController.createPost);
+router.post('/', postsController.createPost);
+
+// Delete a post
+router.delete('/:id', postsController.deletePost);
 
 module.exports = router;

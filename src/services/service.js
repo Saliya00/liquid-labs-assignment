@@ -75,3 +75,10 @@ exports.createPost = async (post) => {
     ...post,
   };
 };
+
+// Delete a post by post ID
+exports.deletePost = async (id) => {
+  const result = await db.run(`DELETE FROM posts WHERE id = ?`, [id]);
+  console.log(result);
+  return result.changes > 0;
+};

@@ -66,12 +66,12 @@ http://localhost:3000
 
 ## API Endpoints
 
-| Method | Endpoint     | Description            |
-| ------ | ------------ | ---------------------- |
-| GET    | `/posts`     | Retrieve all posts     |
-| GET    | `/posts/:id` | Retrieve a single post |
-| POST   | `/posts`     | Create a new post      |
-| DELETE | `/posts/:id` | Delete a post          |
+| Method | Endpoint        | Description            |
+| ------ | --------------- | ---------------------- |
+| GET    | `/posts`        | Retrieve all posts     |
+| GET    | `/posts/:id`    | Retrieve a single post |
+| POST   | `/posts/create` | Create a new post      |
+| DELETE | `/posts/:id`    | Delete a post          |
 
 ---
 
