@@ -24,6 +24,7 @@ exports.getAllPosts = async (req, res) => {
 exports.getPostById = async (req, res) => {
   console.log('inside getPostById controller function');
 
+  // Validate route parameter is a positive integer
   const id = Number(req.params.id);
   if (!Number.isInteger(id)) {
     return res.status(400).json({
@@ -39,10 +40,10 @@ exports.getPostById = async (req, res) => {
       });
     }
 
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (error) {
     console.error('Error retrieving post:', error.message);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Internal server error',
     });
   }
@@ -74,7 +75,9 @@ exports.createPost = async (req, res) => {
  */
 exports.deletePost = async (req, res) => {
   const id = Number(req.params.id);
-  if (!Number.isInteger(id)) {
+
+  // Validate route parameter is a positive integer
+  if (!Number.isInteger(id) || id <= 0) {
     return res.status(400).json({
       error: 'Invalid post ID',
     });
@@ -87,7 +90,7 @@ exports.deletePost = async (req, res) => {
       });
     }
 
-    return res.status(204).send();
+    return res.status(204);
   } catch (error) {
     console.error('Error deleting post:', error.message);
 

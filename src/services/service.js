@@ -10,9 +10,12 @@ exports.getAllPosts = async () => {
     return posts;
   }
 
-  const response = await axios.get(BASE_URL);
+  const response = await fetch(BASE_URL);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
   console.log(response);
-  const apiPosts = response.data;
+  const apiPosts = await response.json();
 
   for (const post of apiPosts) {
     await db.run(
@@ -27,38 +30,31 @@ exports.getAllPosts = async () => {
 
 // Fetch single post by post ID
 exports.getPostById = async (id) => {
-  console.log('inside getPostById service function');
+  // Return post if found in local database
   const post = await db.get('SELECT * FROM posts WHERE id = ?', [id]);
-
   if (post) {
-    console.log(post);
     return post;
   }
-  console.log(post);
 
-  try {
-    const response = await axios.get(`${BASE_URL}/${id}`);
-    console.log('next step');
-    const apiPost = response.data;
-    console.log(apiPost);
-    if (!apiPost.id) {
-      return null;
-    }
-    console.log('before db.run to update missing');
-    await db.run(
-      `INSERT INTO posts (id, userId, title, body)
-         VALUES (?, ?, ?, ?)`,
-      [apiPost.id, apiPost.userId, apiPost.title, apiPost.body],
-    );
+  const response = await fetch(`${BASE_URL}/${id}`);
 
-    return apiPost;
-  } catch (error) {
-    if (error.response && error.response.status === 404) {
-      return null;
-    }
-
-    throw error;
+  if (response.status === 404) {
+    return null;
   }
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const apiPost = await response.json();
+
+  await db.run(
+    `INSERT INTO posts (id, userId, title, body)
+     VALUES (?, ?, ?, ?)`,
+    [apiPost.id, apiPost.userId, apiPost.title, apiPost.body],
+  );
+
+  return apiPost;
 };
 
 // Create a new post
