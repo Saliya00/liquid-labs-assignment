@@ -58,7 +58,7 @@ function run(sql, params = []) {
   return new Promise((resolve, reject) => {
     connection.run(sql, params, function (err) {
       if (err) {
-        console.log(err)
+        console.log(err);
         return reject(err);
       }
 

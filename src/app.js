@@ -12,7 +12,7 @@ const postsRoutes = require('./routes/routes');
 
 app.use(express.json());
 
-// Send a response on GET requests on /
+// Send a response on /
 app.get('/', (req, res) => {
   res.send('Node API is running!');
 });
@@ -22,4 +22,5 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
+// Base path for routes
 app.use('/posts', postsRoutes);

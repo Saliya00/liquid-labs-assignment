@@ -4,7 +4,7 @@ const BASE_URL = process.env.BASE_URL;
 
 // Fetch all posts while considering the caching logic
 exports.getAllPosts = async () => {
-  const posts = await db.all('SELECT * FROM posts');
+  const posts = await db.all('SELECT id, title, body FROM posts');
 
   if (posts.length > 0) {
     return posts;
@@ -19,19 +19,19 @@ exports.getAllPosts = async () => {
 
   for (const post of apiPosts) {
     await db.run(
-      `INSERT INTO posts (id, userId, title, body)
-             VALUES (?, ?, ?, ?)`,
-      [post.id, post.userId, post.title, post.body],
+      `INSERT INTO posts (id, title, body)
+             VALUES (?, ?, ?)`,
+      [post.id, post.title, post.body],
     );
   }
 
   return apiPosts;
 };
 
-// Fetch single post by post ID
+// Fetch single post by post ID also considering caching logic
 exports.getPostById = async (id) => {
   // Return post if found in local database
-  const post = await db.get('SELECT * FROM posts WHERE id = ?', [id]);
+  const post = await db.get('SELECT id, title, body FROM posts WHERE id = ?', [id]);
   if (post) {
     return post;
   }
@@ -49,21 +49,21 @@ exports.getPostById = async (id) => {
   const apiPost = await response.json();
 
   await db.run(
-    `INSERT INTO posts (id, userId, title, body)
-     VALUES (?, ?, ?, ?)`,
-    [apiPost.id, apiPost.userId, apiPost.title, apiPost.body],
+    `INSERT INTO posts (id, title, body)
+     VALUES (?, ?, ?)`,
+    [apiPost.id, apiPost.title, apiPost.body],
   );
 
   return apiPost;
 };
 
-// Create a new post
+// Create a new post in local database
 exports.createPost = async (post) => {
   console.log(post.userId, post.title, post.body);
   const result = await db.run(
-    `INSERT INTO posts (userId, title, body)
-     VALUES (?, ?, ?)`,
-    [post.userId, post.title, post.body],
+    `INSERT INTO posts (title, body)
+     VALUES (?, ?)`,
+    [post.title, post.body],
   );
 
   return {
@@ -72,9 +72,25 @@ exports.createPost = async (post) => {
   };
 };
 
-// Delete a post by post ID
+// Delete a post by post ID in local database
 exports.deletePost = async (id) => {
+  console.log('inside deleted fn db,js');
   const result = await db.run(`DELETE FROM posts WHERE id = ?`, [id]);
   console.log(result);
   return result.changes > 0;
+};
+
+// Update a post by post ID in local database
+exports.updatePost = async (id, post) => {
+  const result = await db.all(
+    `UPDATE posts 
+    SET title = ?,
+        body = ? 
+    WHERE id=?`,
+    [post.title, post.body, id],
+  );
+  if (result.changes === 0) {
+    return null;
+  }
+  return await db.get(`SELECT id, title, body FROM posts WHERE id = ?`, [id]);
 };

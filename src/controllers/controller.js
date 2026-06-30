@@ -5,7 +5,6 @@ const service = require('../services/service');
  * Returns all posts.
  */
 exports.getAllPosts = async (req, res) => {
-  console.log('inside viewallposts fn');
   try {
     const posts = await service.getAllPosts();
     res.status(200).json(posts);
@@ -22,11 +21,9 @@ exports.getAllPosts = async (req, res) => {
  * Returns a single post by post ID.
  */
 exports.getPostById = async (req, res) => {
-  console.log('inside getPostById controller function');
-
   // Validate route parameter is a positive integer
   const id = Number(req.params.id);
-  if (!Number.isInteger(id)) {
+  if (!Number.isInteger(id) || id <= 0) {
     return res.status(400).json({
       error: 'Invalid post ID',
     });
@@ -50,13 +47,11 @@ exports.getPostById = async (req, res) => {
 };
 
 /**
- * POST /posts/create
+ * POST /posts
  * Create a new post
  */
 exports.createPost = async (req, res) => {
   try {
-    console.log('inside createPost controller');
-    console.log(req.body);
     const newPost = await service.createPost(req.body);
 
     return res.status(201).json(newPost);
@@ -84,16 +79,33 @@ exports.deletePost = async (req, res) => {
   }
   try {
     const deleted = await service.deletePost(id);
+
     if (!deleted) {
       return res.status(404).json({
         error: 'Post not found',
       });
     }
 
-    return res.status(204);
+    return res.status(204).end();
   } catch (error) {
     console.error('Error deleting post:', error.message);
 
+    return res.status(500).json({
+      error: 'Internal server error',
+    });
+  }
+};
+
+exports.updatePost = async (req, res) => {
+  const postUpdated = await service.updatePost(req.params.id, req.body);
+  try {
+    if (!postUpdated) {
+      return res.status(404).json({
+        error: 'Post not found',
+      });
+    }
+    return res.status(200).json(postUpdated);
+  } catch (err) {
     return res.status(500).json({
       error: 'Internal server error',
     });

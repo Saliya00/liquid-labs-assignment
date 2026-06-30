@@ -3,7 +3,7 @@ const router = express.Router();
 const postsController = require('../controllers/controller');
 
 // Get all posts.
-router.get('/all', postsController.getAllPosts);
+router.get('/', postsController.getAllPosts);
 
 // Get a single post by post ID
 router.get('/:id', postsController.getPostById);
@@ -13,5 +13,8 @@ router.post('/', postsController.createPost);
 
 // Delete a post
 router.delete('/:id', postsController.deletePost);
+
+// Update a post
+router.put('/:id', postsController.updatePost);
 
 module.exports = router;
