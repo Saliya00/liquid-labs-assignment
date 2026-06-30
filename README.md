@@ -10,6 +10,7 @@ REST API built with Node.js and Express following a layered Route, Controller an
 - Retrieve a single post by ID
 - Create a new post in the local database
 - Delete a post from the local database
+- UPdate a post from local databse
 - Cache external API responses in SQLite
 - Layered architecture (Routes → Controllers → Services → Database)
 
@@ -19,7 +20,6 @@ REST API built with Node.js and Express following a layered Route, Controller an
 
 - Express
 - SQLite3
-- Axios
 - dotenv
 - Nodemon (For development)
 
@@ -78,13 +78,12 @@ http://localhost:3000
 
 ## Caching Strategy
 
-The application implements a local database first caching strategy.
+The application implements a simple caching mechanism using a seperate `cache_status` table
 
-1. Check whether the requested data exists in the local SQLite database.
-2. If found, return data from database.
-3. If not, retrieve the data from the third party JSONPlaceholder API.
-4. Insert retrieved data into database.
-5. Return the data to the client.
+1. On the first request to GET /posts, data is fetched from the external API and stored locally in the database while updating `is_cache_available` field to `true`
+2. Once cached, all subsequent `GET /posts` requests are served directly from the SQLite database.
+3. `GET /posts/:id` first checks the local database for the requested post. If it is not found, the post is retrieved from the external API, cached locally and then returned.
+4. Uses `INSERT OR IGNORE` in SQL query to avoid inserting duplicate records into the local database.
 
 ---
 

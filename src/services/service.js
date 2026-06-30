@@ -1,31 +1,37 @@
-const axios = require('axios');
 const db = require('../database/database');
 const BASE_URL = process.env.BASE_URL;
 
 // Fetch all posts while considering the caching logic
 exports.getAllPosts = async () => {
-  const posts = await db.all('SELECT id, title, body FROM posts');
+  const cache = await db.get('SELECT is_cache_available FROM cache_status WHERE id = 1');
 
-  if (posts.length > 0) {
-    return posts;
-  }
+  if (!cache.is_cache_available) {
+    console.log(`cache status - ${cache.is_cache_available}`);
+    const response = await fetch(BASE_URL);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    console.log(response);
+    const apiPosts = await response.json();
 
-  const response = await fetch(BASE_URL);
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
-  }
-  console.log(response);
-  const apiPosts = await response.json();
-
-  for (const post of apiPosts) {
-    await db.run(
-      `INSERT INTO posts (id, title, body)
+    for (const post of apiPosts) {
+      await db.run(
+        `INSERT OR IGNORE INTO posts (id, title, body)
              VALUES (?, ?, ?)`,
-      [post.id, post.title, post.body],
+        [post.id, post.title, post.body],
+      );
+    }
+
+    console.log('updating cache_status');
+    await db.run(
+      `UPDATE cache_status
+       SET is_cache_available = 1
+       WHERE id = 1`,
     );
+    return apiPosts;
   }
 
-  return apiPosts;
+  return await db.all(`SELECT id, title, body FROM posts`);
 };
 
 // Fetch single post by post ID also considering caching logic
