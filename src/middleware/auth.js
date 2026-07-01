@@ -1,3 +1,4 @@
+// Middleware to check if the API calls are authenticated with the api_key
 module.exports = (req, res, next) => {
   const apiKey = req.header('x-api-key');
 

@@ -31,29 +31,28 @@ function all(sql, params = []) {
   return new Promise((resolve, reject) => {
     connection.all(sql, params, (err, rows) => {
       if (err) {
+        console.log(err);
         return reject(err);
       }
-
       resolve(rows);
     });
   });
 }
 
-// Execute queries which returns multiple rows of data
+// Execute queries which returns a single row of data
 function get(sql, params = []) {
-  console.log('Inside database.js get()');
   return new Promise((resolve, reject) => {
     connection.get(sql, params, (err, row) => {
       if (err) {
+        console.log(err);
         return reject(err);
       }
-      console.log(resolve(row));
       resolve(row);
     });
   });
 }
 
-// Execute INSERT, UPDATE or DELETE statements.
+// Execute INSERT, UPDATE or DELETE queries
 function run(sql, params = []) {
   return new Promise((resolve, reject) => {
     connection.run(sql, params, function (err) {

@@ -6,12 +6,10 @@ exports.getAllPosts = async () => {
   const cache = await db.get('SELECT is_cache_available FROM cache_status WHERE id = 1');
 
   if (!cache.is_cache_available) {
-    console.log(`cache status - ${cache.is_cache_available}`);
     const response = await fetch(BASE_URL);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
-    console.log(response);
     const apiPosts = await response.json();
 
     for (const post of apiPosts) {
@@ -22,7 +20,6 @@ exports.getAllPosts = async () => {
       );
     }
 
-    console.log('updating cache_status');
     await db.run(
       `UPDATE cache_status
        SET is_cache_available = 1
@@ -34,7 +31,7 @@ exports.getAllPosts = async () => {
   return await db.all(`SELECT id, title, body FROM posts`);
 };
 
-// Fetch single post by post ID also considering caching logic
+// Fetch a single post by post ID from external api if not cached in the local database
 exports.getPostById = async (id) => {
   // Return post if found in local database
   const post = await db.get('SELECT id, title, body FROM posts WHERE id = ?', [id]);
@@ -65,7 +62,6 @@ exports.getPostById = async (id) => {
 
 // Create a new post in local database
 exports.createPost = async (post) => {
-  console.log(post.userId, post.title, post.body);
   const result = await db.run(
     `INSERT INTO posts (title, body)
      VALUES (?, ?)`,
@@ -80,9 +76,7 @@ exports.createPost = async (post) => {
 
 // Delete a post by post ID in local database
 exports.deletePost = async (id) => {
-  console.log('inside deleted fn db,js');
   const result = await db.run(`DELETE FROM posts WHERE id = ?`, [id]);
-  console.log(result);
   return result.changes > 0;
 };
 

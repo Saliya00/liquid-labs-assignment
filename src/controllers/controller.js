@@ -21,7 +21,7 @@ exports.getAllPosts = async (req, res) => {
  * Returns a single post by post ID.
  */
 exports.getPostById = async (req, res) => {
-  // Validate route parameter is a positive integer
+  // Validate route parameter (post ID) is a positive integer
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) {
     return res.status(400).json({
@@ -71,7 +71,7 @@ exports.createPost = async (req, res) => {
 exports.deletePost = async (req, res) => {
   const id = Number(req.params.id);
 
-  // Validate route parameter is a positive integer
+  // Validate route parameter (post ID) is a positive integer
   if (!Number.isInteger(id) || id <= 0) {
     return res.status(400).json({
       error: 'Invalid post ID',
@@ -96,6 +96,10 @@ exports.deletePost = async (req, res) => {
   }
 };
 
+/**
+ * UPDATE /posts/:id
+ * Updates a post by post ID.
+ */
 exports.updatePost = async (req, res) => {
   const postUpdated = await service.updatePost(req.params.id, req.body);
   try {
