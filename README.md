@@ -13,15 +13,16 @@ REST API built with Node.js and Express following a layered Route, Controller an
 - UPdate a post from local databse
 - Cache external API responses in SQLite
 - Layered architecture (Routes → Controllers → Services → Database)
+- API endpoints secured with a simple API_KEY based authentication middleware
 
 ---
 
 ## Dependencies Used
 
-- Express
-- SQLite3
-- dotenv
-- Nodemon (For development)
+- Express - Web application framework used to build the REST API
+- SQLite3 - Used as the local database
+- dotenv - Used to load environment variables from `.env` file into `process.env` at runtime
+- Nodemon (For development) - Used to auto restart application when source code changes
 
 ---
 
