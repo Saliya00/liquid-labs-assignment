@@ -82,7 +82,7 @@ exports.deletePost = async (id) => {
 
 // Update a post by post ID in local database
 exports.updatePost = async (id, post) => {
-  const result = await db.all(
+  const result = await db.run(
     `UPDATE posts 
     SET title = ?,
         body = ? 

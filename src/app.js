@@ -8,11 +8,11 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-const postsRoutes = require('./routes/routes');
+const postRoutes = require('./routes/post-route');
 
 app.use(express.json());
 
-// Send a response on /
+// Send an API running message on /
 app.get('/', (req, res) => {
   res.send('Node API is running!');
 });
@@ -22,5 +22,5 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-// Base path for routes
-app.use('/posts', postsRoutes);
+// Pass all requests on /posts to posts router
+app.use('/posts', postRoutes);

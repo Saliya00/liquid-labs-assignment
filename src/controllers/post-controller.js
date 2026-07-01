@@ -1,4 +1,4 @@
-const service = require('../services/service');
+const postService = require('../services/post-service');
 
 /**
  * GET /posts
@@ -6,7 +6,7 @@ const service = require('../services/service');
  */
 exports.getAllPosts = async (req, res) => {
   try {
-    const posts = await service.getAllPosts();
+    const posts = await postService.getAllPosts();
     res.status(200).json(posts);
   } catch (error) {
     console.error('Error retrieving posts:', error.message);
@@ -29,7 +29,7 @@ exports.getPostById = async (req, res) => {
     });
   }
   try {
-    const post = await service.getPostById(id);
+    const post = await postService.getPostById(id);
 
     if (!post) {
       return res.status(404).json({
@@ -52,7 +52,7 @@ exports.getPostById = async (req, res) => {
  */
 exports.createPost = async (req, res) => {
   try {
-    const newPost = await service.createPost(req.body);
+    const newPost = await postService.createPost(req.body);
 
     return res.status(201).json(newPost);
   } catch (error) {
@@ -71,15 +71,14 @@ exports.createPost = async (req, res) => {
 exports.deletePost = async (req, res) => {
   const id = Number(req.params.id);
 
-  // Validate route parameter (post ID) is a positive integer
+  // Validate if route parameter (post ID) is a positive integer
   if (!Number.isInteger(id) || id <= 0) {
     return res.status(400).json({
       error: 'Invalid post ID',
     });
   }
   try {
-    const deleted = await service.deletePost(id);
-
+    const deleted = await postService.deletePost(id);
     if (!deleted) {
       return res.status(404).json({
         error: 'Post not found',
@@ -101,7 +100,14 @@ exports.deletePost = async (req, res) => {
  * Updates a post by post ID.
  */
 exports.updatePost = async (req, res) => {
-  const postUpdated = await service.updatePost(req.params.id, req.body);
+  const postUpdated = await postService.updatePost(req.params.id, req.body);
+  // Validate if route parameter (post ID) is a positive integer
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({
+      error: 'Invalid post ID',
+    });
+  }
   try {
     if (!postUpdated) {
       return res.status(404).json({
