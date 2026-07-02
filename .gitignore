@@ -1,8 +1,8 @@
 # Dependencies
 node_modules/
 
-#Custom configurations
+# Custom configurations
 .env
 
-#SQLite database file
+# SQLite database file
 database.sqlite

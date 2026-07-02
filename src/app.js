@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 const postRoutes = require('./routes/post-route');
 
+// Parse JSON body from http request to JS object
 app.use(express.json());
 
 // Send an API running message on /
