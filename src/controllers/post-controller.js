@@ -100,7 +100,6 @@ exports.deletePost = async (req, res) => {
  * Updates a post by post ID.
  */
 exports.updatePost = async (req, res) => {
-  const postUpdated = await postService.updatePost(req.params.id, req.body);
   // Validate if route parameter (post ID) is a positive integer
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) {
@@ -109,6 +108,7 @@ exports.updatePost = async (req, res) => {
     });
   }
   try {
+    const postUpdated = await postService.updatePost(req.params.id, req.body);
     if (!postUpdated) {
       return res.status(404).json({
         error: 'Post not found',
